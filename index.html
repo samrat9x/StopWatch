@@ -22,7 +22,7 @@
         }
         .container{
             padding: 10px;
-            width: 200px;
+            width: 250px;
             height: 200px;
             font-size: 40px;
             text-align: center;
@@ -47,7 +47,7 @@
 <body>
     <div class="container">
         <div class="timer">
-            00:00:00
+            00:00:00.<small>00</small>
         </div>
         <div class="btn">
             <button class="startStopBtn"><i class="fa-solid fa-play"></i></button>
@@ -56,23 +56,44 @@
     </div>
 
     <script>
+        // element selector function
         function $(e){
             return document.querySelector(e);
         }
 
-        let second = 0, minute = 0, hour = 0, sZero = 0, mZero = 0, hZero = 0, interval = null, status = 'stop';
+        // variables
+        let second = 0,
+        minute = 0,
+        hour = 0,
+        sZero = 0,
+        mZero = 0,
+        hZero = 0,
+        interval = null,
+        status = 'stop',
+        milsec = 0,
+        milZero = 0;
         
+        // callback function
         function stopWatch(){
-            second++;
-            if(second/60 === 1){
-                second = 0;
-                minute++;
-                if(minute/60 === 1){
-                    minute = 0;
-                    hour++;
+            milsec++
+            if(milsec/100 === 1){
+                milsec = 0;
+                second++;
+                if(second/60 === 1){
+                    second = 0;
+                    minute++;
+                    if(minute/60 === 1){
+                        minute = 0;
+                        hour++;
+                    }
                 }
             }
-
+            
+            if(milsec < 10){
+                milZero = '0'+milsec;
+            }else{
+                milZero = milsec;
+            }
             if(second < 10){
                 sZero = '0'+second;
             }else{
@@ -90,13 +111,13 @@
             }
 
 
-            $('.timer').innerText = `${hZero}:${mZero}:${sZero}`;
+            $('.timer').innerHTML = `${hZero}:${mZero}:${sZero}.<small>${milZero}</small>`;
         }
 
        
         $('.startStopBtn').addEventListener('click',function(){
             if(status === 'stop'){
-                interval = setInterval(stopWatch, 1000);
+                interval = setInterval(stopWatch, 10);
                 $('.startStopBtn').innerHTML = `<i class="fa-solid fa-pause"></i>`;
                 status = 'start';
             }else{
@@ -104,16 +125,16 @@
                 status = 'stop';
                 $('.startStopBtn').innerHTML = `<i class="fa-solid fa-play"></i>`;
             }
-            
         });
-        $('.resetBtn').addEventListener('click',function(){
+        $('.resetBtn').addEventListener('click', function(){
             clearInterval(interval);
             status = 'stop';
             interval = null;
-            $('.timer').innerText = '00:00:00';
+            $('.timer').innerHTML = `00:00:00.<small>00</small>`;
             second = 0;
             minute = 0;
             hour = 0;
+            milsec = 0
             $('.startStopBtn').innerHTML = `<i class="fa-solid fa-play"></i>`;
         });
     </script>
